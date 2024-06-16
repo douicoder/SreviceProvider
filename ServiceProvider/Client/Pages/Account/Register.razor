@@ -1,0 +1,107 @@
+﻿@page "/"
+
+
+<MudContainer>
+    <h1>Register</h1>
+    <p>Please fill in this form to create an account.</p>
+    <hr />
+    <center>
+        <EditForm Model="_userModel">
+        <DataAnnotationsValidator />
+        <MudItem>
+            <MudTextField Label="First Name" @bind-Value="_userModel.FirstName" Required="true" />
+            <ValidationMessage For="@(()=> _userModel.FirstName)" />
+        </MudItem>
+
+        <MudItem>
+            <MudTextField Label="Last Name" @bind-Value="_userModel.LastName" Required="true" />
+            <ValidationMessage For="@(()=> _userModel.LastName)" />
+        </MudItem>
+
+        <MudItem>
+            <MudTextField Label="Phone Number" @bind-Value="_userModel.PhoneNumber" Required="true" InputType="InputType.Telephone" />
+            <ValidationMessage For="@(()=> _userModel.PhoneNumber)" />
+        </MudItem>
+
+        <MudItem>
+            <MudTextField Label="Email" @bind-Value="_userModel.EmailID" Required="true" InputType="InputType.Email" />
+            <ValidationMessage For="@(()=> _userModel.EmailID)" />
+        </MudItem>
+
+        <MudItem>
+            <MudTextField Label="Password" @bind-Value="_userModel.Password" Required="true" InputType="InputType.Password" />
+            <ValidationMessage For="@(()=> _userModel.Password)" />
+        </MudItem>
+
+        <MudItem>
+            <MudTextField Label="Repeat Password" @bind-Value="_repeatPassword" Required="true" InputType="InputType.Password" />
+            <ValidationMessage For="@(()=> _repeatPassword)" />
+        </MudItem>
+
+        @* <MudItem>
+        <MudTextField Label="Type" @bind-Value="_userModel.CategoryID" Required="true" Type="number" />
+        <ValidationMessage For="@(()=> _userModel.CategoryID)" />
+        </MudItem> *@
+            <MudSelect T="string" Label="Type*" AnchorOrigin="Origin.BottomCenter" @bind-Value="MyProperty">
+                <MudSelectItem Value="@("User")" />
+                <MudSelectItem Value="@("Plumber")" />
+            </MudSelect>
+          
+
+        <br />
+
+        <MudButton Class="goodbtn" Variant="Variant.Filled" Color="Color.Primary" Type="ButtonType.Submit" @onclick="RegisterUser">Register</MudButton>
+        </EditForm>
+    </center>
+</MudContainer>
+
+@code {
+    public static UserModel _userModel = new UserModel();
+    public static int code = 0;
+    string _repeatPassword = "";
+    public string MyProperty { get; set; }
+    private async Task RegisterUser()
+    {
+        if(MyProperty=="User"){ _userModel.CategoryID = 2; } else if(MyProperty=="Plumber"){ _userModel.CategoryID = 1; }
+
+        _userModel.ID = Guid.NewGuid();
+
+        if (_userModel.Password != _repeatPassword)
+        {
+            await js.InvokeVoidAsync("alert", "Password Not Matching!!");
+            return;
+        }
+
+        var response = await Http.GetFromJsonAsync<int>("api/Account/GenrateCode?email="+_userModel.EmailID );
+
+        code = response;
+        NavigationManager.NavigateTo("/verify");
+       
+    }
+}
+
+<style>
+    .registration-form {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+        padding: 20px;
+    }
+
+        .registration-form .mud-item {
+            margin-bottom: 20px;
+        }
+
+    .signin {
+        text-align: center;
+    }
+
+    .goodbtn {
+        padding: 16px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 0.9;
+    }
+</style>

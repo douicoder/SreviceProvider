@@ -1,0 +1,53 @@
+﻿@page "/verify"
+@using Class.User.verify;
+
+<MudContainer>
+    <h1>Verify Account</h1>
+    <hr />
+    <EditForm Model="_verificationModel" OnValidSubmit="VerifyUser">
+        <DataAnnotationsValidator />
+
+@*         <MudItem>
+            <MudTextField Label="Email" @bind-Value="_verificationModel.Email" Required="true" InputType="InputType.Email" />
+            <ValidationMessage For="@(()=> _verificationModel.Email)" />
+        </MudItem> *@
+
+        <MudItem>
+            <MudTextField Label="Verification Code" @bind-Value="_verificationModel.VerificationCode" Required="true" />
+            <ValidationMessage For="@(()=> _verificationModel.VerificationCode)" />
+        </MudItem>
+
+        <br />
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Type="ButtonType.Submit" @onclick="VerifyUser">Verify</MudButton>
+    </EditForm>
+</MudContainer>
+
+@code {
+    UserModel _userModel = Register._userModel;
+
+    VerifyModel _verificationModel = new VerifyModel();
+
+    private async Task VerifyUser()
+    {
+        if(_verificationModel.VerificationCode == Register.code)
+        {
+
+            var response = await Http.PostAsJsonAsync("api/Account/AddUser", _userModel);
+            if (response.IsSuccessStatusCode)
+            {
+
+             
+
+                // Verification successful
+                //ap =i to register user
+                NavigationManager.NavigateTo("/login");
+            }
+        }
+        else
+        {
+            // Verification failed
+            await js.InvokeVoidAsync("alert", "Verification failed. Please check your email and verification code.");
+        }
+    }
+}
