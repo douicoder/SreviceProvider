@@ -1,4 +1,5 @@
-﻿using Class.User.UserModel;
+﻿using Class.User.CategoryModel;
+using Class.User.UserModel;
 using Microsoft.AspNetCore.Mvc;
 using Modules.User.UserInteface;
 using ServiceProvider.Shared.User;
@@ -57,5 +58,14 @@ namespace ServiceProvider.Server.Controllers
           
             return Ok(result);
         }
+
+        [HttpGet]
+        public List<CategoryModel> GetCategories() 
+        {
+        List<CategoryModel> categoryModels = _userAcc.GetAllCategories();
+
+            return categoryModels;
+        }
+
     }
 }

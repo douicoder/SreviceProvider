@@ -1,4 +1,5 @@
-﻿using Class.User.UserModel;
+﻿using Class.User.CategoryModel;
+using Class.User.UserModel;
 using ServiceProvider.Shared.User;
 
 namespace Modules.User.UserInteface
@@ -10,7 +11,9 @@ namespace Modules.User.UserInteface
         public bool Login(string emaiil, string password);
         public bool ChangePassword(ChangePasswordModel changePasswordModel);
         public Task<int> GenrateCode(string email);
- 
+        public List<CategoryModel> GetAllCategories();
+
+
 
     }
 }

@@ -6,6 +6,7 @@ using Modules.User.UserInteface;
 using MailKit.Net.Smtp;
 using MimeKit;
 using ServiceProvider.Shared.User;
+using Class.User.CategoryModel;
 
 namespace Modules.User.UserManager
 {
@@ -83,6 +84,19 @@ namespace Modules.User.UserManager
             {
                 // Handle exception
                 return false;
+            }
+        }
+
+        public List<CategoryModel> GetAllCategories()
+        {
+            try
+            {
+              
+                return database.CategoriesDB.ToList();
+            }
+            catch (Exception ex)
+            {
+                return new List<CategoryModel>();
             }
         }
 
