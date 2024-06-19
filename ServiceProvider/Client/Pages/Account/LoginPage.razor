@@ -33,17 +33,12 @@
         var response = await Http.PostAsJsonAsync("api/Account/Login",_loginModel);
         if (response.IsSuccessStatusCode)
         {
-            // Login successful
-            // You can navigate to the home page or perform any other action here
-            // To store email address
             await localStorage.SetItemAsync("EmailAddress", _loginModel.Email);
 
             NavigationManager.NavigateTo("/changepassword");
         }
         else
         {
-            // Login failed
-            // You can display an error message here
             await js.InvokeVoidAsync("alert", "Login failed. Please check your email and password.");
         }
     }

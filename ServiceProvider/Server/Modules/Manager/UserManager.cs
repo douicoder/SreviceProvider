@@ -12,10 +12,10 @@ namespace Modules.User.UserManager
 {
     public class UserManager : IUserManager
     {
-        DatabaseContext database = new();
+      
         // Hardcoded salt value
         private const string Salt = "iIjG8DGesRt4aM9KUYh+AQ==";
-
+        DatabaseContext database = new();
         public UserManager(DatabaseContext _db)
         {
             database = _db;

@@ -1,6 +1,7 @@
 ﻿using Class.User.UserModel;
 using Class.User.CategoryModel;
 using Microsoft.EntityFrameworkCore;
+using ServiceProvider.Shared.User;
 
 
 public class DatabaseContext : DbContext
@@ -17,6 +18,8 @@ public class DatabaseContext : DbContext
 
     public virtual DbSet<UserModel> UsersModelDB { get; set; }
     public virtual DbSet<CategoryModel> CategoriesDB { get; set; }
+
+    public virtual DbSet<ServiceProviderProfile> ServiceProviderProfilesDB { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,6 +41,18 @@ public class DatabaseContext : DbContext
             c.Property(e => e.CategoryID).HasColumnName("CategoryID").IsRequired();
             c.Property(e => e.Name).HasColumnName("Name").HasMaxLength(50);
             c.Property(e => e.Description).HasColumnName("Description").HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<ServiceProviderProfile>(sp =>
+        {
+            sp.ToTable("ServiceProviderProfileTB");
+            sp.Property(e => e.ServiceproviderProfileID).HasColumnName("ServiceproviderProfileID").IsRequired();
+            sp.Property(e => e.UserID).HasColumnName("UserID");
+            sp.Property(e => e.ShopName).HasColumnName("ShopName").HasMaxLength(200);
+            sp.Property(e => e.PinCode).HasColumnName("PinCode").HasMaxLength(6);
+            sp.HasKey(e => e.ServiceproviderProfileID);
+
+          
         });
     }
 }

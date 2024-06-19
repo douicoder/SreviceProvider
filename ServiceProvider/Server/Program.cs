@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Modules.User.UserInteface;
 using Modules.User.UserManager;
+using ServiceProvider.Server.Modules.Interface;
+using ServiceProvider.Server.Modules.Manager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddDbContext<DatabaseContext>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IUserManager, UserManager>();
+builder.Services.AddTransient<IServiceProviderDetailsManager, ServiceProviderDetailsManager>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
