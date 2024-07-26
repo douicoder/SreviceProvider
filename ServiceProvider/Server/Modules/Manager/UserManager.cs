@@ -5,8 +5,8 @@ using Class.User.UserModel;
 using Modules.User.UserInteface;
 using MailKit.Net.Smtp;
 using MimeKit;
-using ServiceProvider.Shared.User;
 using Class.User.CategoryModel;
+using ServiceProvider.Shared.User;
 
 namespace Modules.User.UserManager
 {
@@ -124,7 +124,28 @@ namespace Modules.User.UserManager
         }
 
 
-        
+        public UserModel GetUser(string email)
+        {
+            try
+            {
+                // Retrieve the service provider profile based on the userId
+                var serviceProviderProfile = database.UsersModelDB.FirstOrDefault(sp => sp.EmailID == email);
+
+                return serviceProviderProfile;
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (you might want to log this exception)
+                return null; // Return null in case of an exception
+            }
+        }
+
+
+
+
+
+
+
 
         // Method to compute hash
         private string ComputeHash(string password, string salt)

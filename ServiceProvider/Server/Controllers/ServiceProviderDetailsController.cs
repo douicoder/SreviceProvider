@@ -27,24 +27,48 @@ namespace ServiceProvider.Server.Controllers
             return NotFound(false);
         }
 
-
-        public ServiceProviderProfile GetServiceProviderProfile(Guid userId)
+        [HttpGet]
+        public IActionResult GetServiceProviderProfile(Guid userId)
         {
             try
             {
                 ServiceProviderProfile serviceProviderProfile = _spd.GetDetail(userId);
-
-                return serviceProviderProfile;
-              
-                    
+                ServiceProviderProfile newservice = new ServiceProviderProfile();
+                if (serviceProviderProfile == null) 
+                {
+                   
+                   return Ok(newservice);
+                }
+                else 
+                {
+                    return Ok(serviceProviderProfile);
+                }
                 
+                
+
+
+
             }
             catch (Exception ex)
             {
                 // Log the exception
-                return null;
+            return NotFound(null);
+
             }
         }
+
+
+        [HttpPost]
+        public IActionResult Updatedetails(ServiceProviderProfile spdclass) 
+        {
+            var result = _spd.UpdateDetails(spdclass);
+            if (result)
+            {
+                return Ok(true);
+            }
+            return NotFound(false);
+        }
+
 
 
     }

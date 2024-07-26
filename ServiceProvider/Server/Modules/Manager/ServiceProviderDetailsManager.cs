@@ -36,7 +36,7 @@ namespace ServiceProvider.Server.Modules.Manager
             try
             {
                 // Retrieve the service provider profile based on the userId
-                var serviceProviderProfile = database.ServiceProviderProfilesDB.FirstOrDefault(sp => sp.UserID == userid);
+                ServiceProviderProfile serviceProviderProfile = database.ServiceProviderProfilesDB.FirstOrDefault(sp=>sp.UserID==userid);
 
                 return serviceProviderProfile;
             }
@@ -51,17 +51,10 @@ namespace ServiceProvider.Server.Modules.Manager
         {
             try
             {
-                var existingProfile = database.ServiceProviderProfilesDB.Find(serviceProviderProfile.UserID);
-                if (existingProfile == null)
-                {
-                    return false; // or throw an exception if desired
-                }
 
-                // Update relevant properties
-                existingProfile = serviceProviderProfile;
            
                 // Update other properties as needed
-
+                database.ServiceProviderProfilesDB.Update(serviceProviderProfile);
                 database.SaveChanges();
                 return true;
             }

@@ -13,9 +13,13 @@
 @using Class.User.UserModel
 @using MudBlazor
 @inject HttpClient Http;
-@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @using ServiceProvider.Shared.User
 @using Class.User.CategoryModel
-
+@using Blazored.LocalStorage
+@inject ILocalStorageService _localstorage;
+@inject ILocalStorageService localStorage;
+@using ServiceProvider.Client.Pages.Account
+@using ServiceProvider.Shared.Requests
+@inject ISnackbar Snackbar;
 
 

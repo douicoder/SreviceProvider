@@ -1,0 +1,78 @@
+﻿@page "/raiserequest"
+
+<style>
+    .mud-select .mud-select-input .mud-input-slot {
+        padding-right: 97%;
+    }
+</style>
+<MudContainer>
+<h1>Register</h1>
+<p>Please fill in this form to create an account.</p>
+<hr />
+<center>
+        <EditForm Model="request">
+    <DataAnnotationsValidator />
+    <MudItem>
+                <MudTextField Label="Problem" @bind-Value="request.Problem" Required="true" />
+                <ValidationMessage For="@(()=> request.Problem)" />
+    </MudItem>
+            <MudItem>
+                <MudTextField Label="Description" @bind-Value="request.Description" Required="true" />
+                <ValidationMessage For="@(()=> request.Description)" />
+            </MudItem>
+            <MudItem>
+                <MudTextField Label="Pin code" @bind-Value="pincode" Required="true" />
+                <ValidationMessage For="@(()=> request.Pincode)" />
+            </MudItem>
+            <br />
+
+            <MudButton Class="goodbtn" Variant="Variant.Filled" Color="Color.Primary" Type="ButtonType.Submit"  @onclick="AddRequest">Raise Requesst</MudButton>
+        </EditForm>
+    </center>
+</MudContainer>
+
+@code
+{
+    RequestClass request = new RequestClass();
+    UserModel? publicuserModel = new UserModel();
+    string? pincode;
+    protected override async Task OnInitializedAsync()
+    {
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
+        await js.InvokeVoidAsync("alert", "ID is -" + publicuserModel.ID);
+    }
+
+    public async void AddRequest()
+    {
+        var result = await Http.GetFromJsonAsync<bool>($"api/Pincode/CheckPinCode?code=" + pincode);
+
+        if (result)
+        {
+
+            await js.InvokeVoidAsync("alert", "ID is -" + publicuserModel.ID);
+            request.RequestID = Guid.NewGuid();
+            request.UserID = publicuserModel.ID;
+            request.CreateDate = DateTime.Now;
+            request.IsCanceled = false;
+            request.IsCanceledBy = null;
+            request.IsCanceledByID = null;
+            request.CancelReason = null;
+            request.CancelResonDate = null;
+            request.IsAccepted = false;
+            request.Pincode = pincode;
+
+            var response = await Http.PostAsJsonAsync("api/Request/PostRequest", request);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Request Added");
+                NavigationManager.NavigateTo("userdashboard");
+            }
+        }
+        else
+        {
+            
+            await js.InvokeVoidAsync("alert", "Pincode is not correct");
+
+        }
+    }
+}

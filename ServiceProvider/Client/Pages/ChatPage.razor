@@ -1,0 +1,10 @@
+﻿<h3>ChatPage</h3>
+<h2>@Username </h2>
+<h2>@UserID</h2>
+<MudTextField @bind-Value="TextValue" Label="Outlined" Variant="Variant.Outlined"></MudTextField><MudButton>Send...</MudButton>
+@code {
+    public string TextValue { get; set; }
+    public string Username { get; set; }
+    public string UserID { get; set; }
+
+}

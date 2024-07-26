@@ -1,0 +1,95 @@
+﻿@page "/serviceproviderprofiledetails"
+@using ServiceProvider.Shared
+<MudContainer>
+    <h1>Fill Details</h1>
+    <p>Please fill in this form.</p>
+    <hr />
+    <center>
+        <EditForm Model="_serviceprovider">
+            <DataAnnotationsValidator />
+            @if (showshopname == true)
+            {
+                <MudItem>
+                    <MudTextField Label="Shop Name" @bind-Value="_serviceprovider.ShopName" Required="true" />
+                    <ValidationMessage For="@(()=> _serviceprovider.ShopName)" />
+                </MudItem>
+            }
+            <MudItem>
+                <MudTextField Label="Pin Code" @bind-Value="pincode" Required="true" />
+                <ValidationMessage For="@(()=> pincode)" />
+            </MudItem>
+
+            <br />
+
+            <MudButton Class="goodbtn" Variant="Variant.Filled" Color="Color.Primary" Type="ButtonType.Submit" @onclick="PostDetails">Done!!</MudButton>
+        </EditForm>
+    </center>
+</MudContainer>
+@code {
+
+
+
+    ServiceProviderProfile? _serviceprovider = new ServiceProviderProfile();
+    string pincode;
+    UserModel publicuserModel = new UserModel();
+    bool showshopname = false;
+    protected override async Task OnInitializedAsync()
+    {
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
+        await js.InvokeVoidAsync("alert", publicuserModel.ID);
+        _serviceprovider = await Http.GetFromJsonAsync<ServiceProviderProfile>("api/ServiceProviderDetails/GetServiceProviderProfile?userId=" + publicuserModel.ID);
+        await js.InvokeVoidAsync("alert", _serviceprovider);
+        await js.InvokeVoidAsync("alert", publicuserModel.CategoryID);
+
+
+        if (string.IsNullOrEmpty(_serviceprovider.ShopName) && publicuserModel.CategoryID == 1)
+        {
+            showshopname = true;
+        }
+        else
+        {
+            showshopname = false;
+        }
+    }
+    //username:doui.personalgurvinder@gmail.com
+    //password:1234
+    public async void PostDetails()
+    {
+        var result = await Http.GetFromJsonAsync<bool>($"api/Pincode/CheckPinCode?code=" + pincode);
+
+        if (result)
+        {
+
+
+
+
+
+            if (showshopname == true)
+            {
+                _serviceprovider.ServiceproviderProfileID = Guid.NewGuid();
+                _serviceprovider.UserID = publicuserModel.ID;
+                _serviceprovider.PinCode = pincode;
+                await Http.PostAsJsonAsync("api/ServiceProviderDetails/Adddetails", _serviceprovider);
+                await js.InvokeVoidAsync("alert", "Profile Completed!!");
+            }
+
+            else
+            {
+
+
+                _serviceprovider = await Http.GetFromJsonAsync<ServiceProviderProfile>("api/ServiceProviderDetails/GetServiceProviderProfile?userId=" + publicuserModel.ID);
+
+                _serviceprovider.PinCode = pincode;
+                await Http.PostAsJsonAsync("api/ServiceProviderDetails/Updatedetails", _serviceprovider);
+                await js.InvokeVoidAsync("alert", "The pin code Updated!!");
+                pincode = "";
+            }
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", "The pin code is not valid!!");
+            pincode = "";
+        }
+    }
+
+}

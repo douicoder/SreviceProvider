@@ -1,5 +1,6 @@
 ﻿@page "/login"
-
+@using Blazored.LocalStorage
+@inject ILocalStorageService _localstorage
 
 <MudContainer>
     <h1>Login</h1>
@@ -26,16 +27,37 @@
 @code {
     LoginModel _loginModel = new LoginModel();
 
-    
+      UserModel? publicuserModel = new UserModel();
 
     private async Task LoginUser()
     {
         var response = await Http.PostAsJsonAsync("api/Account/Login",_loginModel);
         if (response.IsSuccessStatusCode)
         {
-            await localStorage.SetItemAsync("EmailAddress", _loginModel.Email);
+            await _localstorage.SetItemAsync("EmailAddress", _loginModel.Email);
+            publicuserModel = await Http.GetFromJsonAsync<UserModel>("api/Account/GetUser?email=" + _loginModel.Email);
+         await _localstorage.SetItemAsync("currentuser", publicuserModel);
+            if (publicuserModel?.CategoryID == 2)
+            {
+                UserModel publicuserModelnew = await _localstorage.GetItemAsync<UserModel>("currentuser");
+                await js.InvokeVoidAsync("alert", "new ID is -" + publicuserModelnew.ID);
 
-            NavigationManager.NavigateTo("/changepassword");
+               // await js.InvokeVoidAsync("alert", publicuserModel.CategoryID);
+                //await js.InvokeVoidAsync("alert", "ID is -"+publicuserModel.ID);
+               // NavigationManager.NavigateTo("/serviceproviderprofiledetails");
+                NavigationManager.NavigateTo("/raiserequest");
+            }
+            else   if (publicuserModel?.CategoryID == 1)
+                {
+                    UserModel publicuserModelnew = await _localstorage.GetItemAsync<UserModel>("currentuser");
+                    await js.InvokeVoidAsync("alert", "new ID is -" + publicuserModelnew.ID);
+
+                    // await js.InvokeVoidAsync("alert", publicuserModel.CategoryID);
+                    //await js.InvokeVoidAsync("alert", "ID is -"+publicuserModel.ID);
+                    // NavigationManager.NavigateTo("/serviceproviderprofiledetails");
+                NavigationManager.NavigateTo("/shopacceptdashboard");
+                }
+  
         }
         else
         {

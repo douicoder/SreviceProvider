@@ -12,6 +12,7 @@ namespace Modules.User.UserInteface
         public bool ChangePassword(ChangePasswordModel changePasswordModel);
         public Task<int> GenrateCode(string email);
         public List<CategoryModel> GetAllCategories();
+        public UserModel GetUser(string email);
 
 
 

@@ -1,0 +1,111 @@
+﻿@page "/shopacceptdashboard"
+
+@using ServiceProvider.Shared
+@using ServiceProvider.Shared.Chats
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Shop DashBoards</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (requests == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Problem</th>
+                <th>Description</th>
+                <th>Pincode</th>
+                <th>CreateDate</th>
+                <th>Options</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in requests)
+            {
+                <tr>
+                    @if (forecast.IsAccepted == true)//and reqest is accepted by ME
+                    {
+                        <td>@forecast.Problem</td>
+                        <td>@forecast.Description</td>
+                        <td>@forecast.Pincode</td>
+                        <td>@forecast.CreateDate</td>
+                        <td>
+                            <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success" @onclick="x=>AcceptReques(forecast)">chat</MudButton>
+                            
+                        </td>
+                    }
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RequestClass> requests;
+    UserModel publicuserModel = new UserModel();
+    ServiceProviderProfile serviceProvider = new ServiceProviderProfile();
+    protected override async Task OnInitializedAsync()
+    {
+     
+        requests = await Http.GetFromJsonAsync<List<RequestClass>>("api/Request/GetRequests");
+
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
+        serviceProvider = await Http.GetFromJsonAsync<ServiceProviderProfile>("api/ServiceProviderDetails/GetServiceProviderProfile?userId=" + publicuserModel.ID);
+    }
+
+    public async void AcceptReques(RequestClass requestClass)
+    {
+        RequestClass _urc = new RequestClass();
+        _urc.RequestID = requestClass.RequestID;
+        _urc.UserID = requestClass.UserID;
+        _urc.CreateDate = requestClass.CreateDate;
+        _urc.IsCanceled = requestClass.IsCanceled;
+        _urc.IsCanceledBy = requestClass.IsCanceledBy;
+        _urc.IsCanceledByID = requestClass.IsCanceledByID;
+        _urc.CancelReason = requestClass.CancelReason;
+        _urc.CancelResonDate = requestClass.CancelResonDate;
+        _urc.Problem = requestClass.Problem;
+        _urc.Description = requestClass.Description;
+        _urc.Pincode = requestClass.Pincode;
+        _urc.IsAccepted = true;
+        var request = await Http.PostAsJsonAsync("api/Request/UpdateRequest", _urc);
+
+
+
+        RequestDetailClass _rdc = new RequestDetailClass();
+        _rdc.RequestDetailID = Guid.NewGuid();
+        _rdc.RequestID = requestClass.RequestID;
+        _rdc.AcceptDate = DateTime.Now;
+        _rdc.RequestStatus = "inprogress";
+        _rdc.IsCanceledBy = null;
+        _rdc.AcceptedByID = serviceProvider.ServiceproviderProfileID;
+        var request1 = await Http.PostAsJsonAsync("api/Request/AcceptRequest", _rdc);
+
+        ChatAuditClass cac = new ChatAuditClass();
+        cac.AuditID = Guid.NewGuid();
+        cac.ShopID = serviceProvider.ServiceproviderProfileID;
+        cac.UserID = requestClass.UserID;
+        cac.AuditDate = DateTime.Now;
+        var response = await Http.PostAsJsonAsync("api/Chat/CreateChatAudit", cac);
+        //create
+        NavigationManager.NavigateTo("/chatwindow");
+        //1}we use an external api
+        //1}we use an own api
+    }
+}
+<style>
+    .btnresize {
+        width: 75px;
+        height: 34px;
+    }
+</style>

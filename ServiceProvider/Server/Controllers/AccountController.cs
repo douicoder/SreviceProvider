@@ -60,12 +60,21 @@ namespace ServiceProvider.Server.Controllers
         }
 
         [HttpGet]
-        public List<CategoryModel> GetCategories() 
+        public IActionResult GetCategories() 
         {
         List<CategoryModel> categoryModels = _userAcc.GetAllCategories();
 
-            return categoryModels;
+            return Ok(categoryModels);
         }
+
+        [HttpGet]
+        public IActionResult GetUser(string email) 
+        {
+            UserModel userModel = _userAcc.GetUser(email);
+            return Ok(userModel);
+
+        }
+
 
     }
 }

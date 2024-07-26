@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\Account\ServiceProviderDetails.razor" />
+    <Content Remove="Pages\ChatPage.razor" />
+    <Content Remove="Pages\RaiseRequest.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +28,21 @@
 
   <ItemGroup>
     <_ContentIncludedByDefault Remove="Pages\Account\ServiceProviderDetails.razor" />
+    <_ContentIncludedByDefault Remove="Pages\ChatPage.razor" />
+    <_ContentIncludedByDefault Remove="Pages\RaiseRequest.razor" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Pages\Account\ServiceProviderDetails.razor" />
+    <UpToDateCheckInput Remove="Pages\RaiseRequest.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\ChatPage.razor" />
+    <None Include="Pages\User\Request\RaiseRequest.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\ChatPage.razor" />
   </ItemGroup>
 
 </Project>

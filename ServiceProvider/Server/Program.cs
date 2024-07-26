@@ -12,10 +12,19 @@ builder.Services.AddDbContext<DatabaseContext>
     (options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Add services to the container.
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IUserManager, UserManager>();
 builder.Services.AddTransient<IServiceProviderDetailsManager, ServiceProviderDetailsManager>();
+builder.Services.AddTransient<IPinCodeManager, PinCodeManager>();
+builder.Services.AddTransient<IChatManager, ChatManager>();
+builder.Services.AddTransient<IRequestManager, RequestManager>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -32,6 +41,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

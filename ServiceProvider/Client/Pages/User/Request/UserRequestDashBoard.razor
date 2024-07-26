@@ -1,0 +1,54 @@
+﻿@page "/userdashboard"
+
+@using ServiceProvider.Shared
+@inject HttpClient Http
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (requests == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Problem</th>
+                <th>Description</th>
+                <th>Pincode</th>
+                <th>CreateDate</th>
+                </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in requests)
+            {
+                <tr>
+                    @if(publicuserModel.ID==forecast.UserID)
+                    {
+                    <td>@forecast.Problem</td>
+                    <td>@forecast.Description</td>
+                    <td>@forecast.Pincode</td>
+                    <td>@forecast.CreateDate</td>
+                  
+                    }
+            
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<RequestClass> requests;
+    UserModel publicuserModel = new UserModel();
+    protected override async Task OnInitializedAsync()
+    {
+        requests = await Http.GetFromJsonAsync<List<RequestClass>>("api/Request/GetRequests");
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
+    }
+}

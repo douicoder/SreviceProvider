@@ -9,6 +9,7 @@ namespace ServiceProvider.Server.Modules.Interface
 
         public bool AddDetails(ServiceProviderProfile serviceProviderProfile);
         public ServiceProviderProfile GetDetail(Guid userid);
+        public bool UpdateDetails(ServiceProviderProfile serviceProviderProfile);
 
     }
 }
