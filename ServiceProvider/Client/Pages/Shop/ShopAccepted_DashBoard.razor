@@ -4,11 +4,10 @@
 @using ServiceProvider.Shared.Chats
 @inject HttpClient Http
 
-<PageTitle>Weather forecast</PageTitle>
+<PageTitle>Shop Accept Request DashBoards</PageTitle>
 
-<h1>Shop DashBoards</h1>
+<h1>Shop Accept Request DashBoards</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
 
 @if (requests == null)
 {
@@ -23,6 +22,7 @@ else
                 <th>Description</th>
                 <th>Pincode</th>
                 <th>CreateDate</th>
+                <th>UserName</th>
                 <th>Options</th>
 
 
@@ -35,12 +35,25 @@ else
                     @if (forecast.IsAccepted == true)//and reqest is accepted by ME
                     {
                         <td>@forecast.Problem</td>
-                        <td>@forecast.Description</td>
+                        @if (@forecast.Description?.Length > 4)
+                        {
+                            int length = @forecast.Description.Length - 4;
+                            <td>
+                                @forecast.Description?.Substring(0, 4)
+                                <a @onclick="() => MyServices.ShowDescription(js,forecast.Description)" style="color:blue"><u>see more</u></a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@forecast.Description</td>
+                        }
+
                         <td>@forecast.Pincode</td>
                         <td>@forecast.CreateDate</td>
+                        <td>@forecast.UserName</td>
                         <td>
-                            <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success" @onclick="x=>AcceptReques(forecast)">chat</MudButton>
-                            
+                            <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success" >chat</MudButton>
+
                         </td>
                     }
 
@@ -50,62 +63,18 @@ else
     </table>
 }
 
-@code {
-    private List<RequestClass> requests;
+@code
+{
+    List<GetRequestInfoModel> requests = new List<GetRequestInfoModel>();
     UserModel publicuserModel = new UserModel();
     ServiceProviderProfile serviceProvider = new ServiceProviderProfile();
     protected override async Task OnInitializedAsync()
     {
-     
-        requests = await Http.GetFromJsonAsync<List<RequestClass>>("api/Request/GetRequests");
-
         publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
         serviceProvider = await Http.GetFromJsonAsync<ServiceProviderProfile>("api/ServiceProviderDetails/GetServiceProviderProfile?userId=" + publicuserModel.ID);
+      
+        requests = await Http.GetFromJsonAsync<List<GetRequestInfoModel>>("api/Request/GetRequestInfo?AcceptedByGuid="+serviceProvider.ServiceproviderProfileID);
+
     }
 
-    public async void AcceptReques(RequestClass requestClass)
-    {
-        RequestClass _urc = new RequestClass();
-        _urc.RequestID = requestClass.RequestID;
-        _urc.UserID = requestClass.UserID;
-        _urc.CreateDate = requestClass.CreateDate;
-        _urc.IsCanceled = requestClass.IsCanceled;
-        _urc.IsCanceledBy = requestClass.IsCanceledBy;
-        _urc.IsCanceledByID = requestClass.IsCanceledByID;
-        _urc.CancelReason = requestClass.CancelReason;
-        _urc.CancelResonDate = requestClass.CancelResonDate;
-        _urc.Problem = requestClass.Problem;
-        _urc.Description = requestClass.Description;
-        _urc.Pincode = requestClass.Pincode;
-        _urc.IsAccepted = true;
-        var request = await Http.PostAsJsonAsync("api/Request/UpdateRequest", _urc);
-
-
-
-        RequestDetailClass _rdc = new RequestDetailClass();
-        _rdc.RequestDetailID = Guid.NewGuid();
-        _rdc.RequestID = requestClass.RequestID;
-        _rdc.AcceptDate = DateTime.Now;
-        _rdc.RequestStatus = "inprogress";
-        _rdc.IsCanceledBy = null;
-        _rdc.AcceptedByID = serviceProvider.ServiceproviderProfileID;
-        var request1 = await Http.PostAsJsonAsync("api/Request/AcceptRequest", _rdc);
-
-        ChatAuditClass cac = new ChatAuditClass();
-        cac.AuditID = Guid.NewGuid();
-        cac.ShopID = serviceProvider.ServiceproviderProfileID;
-        cac.UserID = requestClass.UserID;
-        cac.AuditDate = DateTime.Now;
-        var response = await Http.PostAsJsonAsync("api/Chat/CreateChatAudit", cac);
-        //create
-        NavigationManager.NavigateTo("/chatwindow");
-        //1}we use an external api
-        //1}we use an own api
-    }
 }
-<style>
-    .btnresize {
-        width: 75px;
-        height: 34px;
-    }
-</style>

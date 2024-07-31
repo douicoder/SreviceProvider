@@ -32,6 +32,7 @@ namespace ServiceProvider.Shared.Requests
         public string? CancelReason { get; set; }//auto
      
         public DateTime? CancelResonDate { get; set; }//auto
+        
     }
 
 }

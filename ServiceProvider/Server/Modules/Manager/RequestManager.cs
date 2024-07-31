@@ -50,6 +50,24 @@ namespace ServiceProvider.Server.Modules.Manager
 
         }
 
+        public List<GetRequestInfoModel> GetRequestInfoUsers(Guid UserID)
+        {
+            {
+                try
+                {
+                    var id = new Microsoft.Data.SqlClient.SqlParameter("@UserID", UserID);
+                    var result = _database.GetRequestInfoModelDB.FromSqlRaw("EXEC GetRequestInfoForUser @UserID", id).ToList();
+                    return result;
+                }
+
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+            }
+        }
+
         public List<RequestClass> GetRequests()
         {
             List<RequestClass> requestClasses = _database.RequestsDB.ToList();

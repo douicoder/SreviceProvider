@@ -20,6 +20,12 @@ namespace ServiceProvider.Server.Controllers
             List<GetRequestInfoModel> getRequestInfoModels = _rm.GetRequestInfo(AcceptedByGuid);
             return Ok(getRequestInfoModels);
         }
+        [HttpGet]
+        public IActionResult GetRequestInfoUser(Guid UserID)
+        {
+            List<GetRequestInfoModel> getRequestInfoModels = _rm.GetRequestInfoUsers(UserID);
+            return Ok(getRequestInfoModels);
+        }
         [HttpPost]
         public IActionResult PostRequest([FromBody] RequestClass reequestClass) 
         {

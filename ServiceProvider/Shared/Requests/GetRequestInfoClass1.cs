@@ -11,15 +11,15 @@ namespace ServiceProvider.Shared.Requests
     public class GetRequestInfoModel
     {
         [Key]
-        public Guid RequestID { get; set; }//auto//1
+        public Guid? RequestID { get; set; }//auto//1
         [Required]
         public Guid? UserID { get; set; }//auto//2
         [Required]
-        public string Problem { get; set; }///3
+        public string? Problem { get; set; }///3
         [Required]
-        public string Description { get; set; }//4
+        public string? Description { get; set; }//4
         [Required]
-        public string Pincode { get; set; }//5
+        public string ?Pincode { get; set; }//5
         [Required]
         public DateTime? CreateDate { get; set; }//auto//6
         [Required]
@@ -32,13 +32,15 @@ namespace ServiceProvider.Shared.Requests
         
         public string? CancelReason { get; set; }//auto//11
 
+        public string? ShopName { get; set; }
+        public string? UserName { get; set; }
         public DateTime? CancelResonDate { get; set; }//auto//12
 
         [Key]
-        public Guid RequestDetailID { get; set; }//13
+        public Guid ?RequestDetailID { get; set; }//13
       
         public DateTime? AcceptDate { get; set; }//14
-        public string RequestStatus { get; set; }//15
+        public string? RequestStatus { get; set; }//15
 
         public Guid? AcceptedByID { get; set; }//16
 
