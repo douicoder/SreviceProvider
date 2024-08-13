@@ -51,11 +51,15 @@ namespace ServiceProvider.Server.Modules.Manager
         {
             try
             {
+                var record = database.ServiceProviderProfilesDB.Where(c => c.ServiceproviderProfileID == serviceProviderProfile.ServiceproviderProfileID).FirstOrDefault();
 
-           
+                if (record != null)
+                {
+                    record.PinCode = serviceProviderProfile.PinCode;
+                    database.SaveChanges();
+                }
                 // Update other properties as needed
-                database.ServiceProviderProfilesDB.Update(serviceProviderProfile);
-                database.SaveChanges();
+               
                 return true;
             }
             catch (Exception ex)

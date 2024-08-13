@@ -33,7 +33,7 @@ else
             @foreach (var forecast in requests)
             {
                 <tr>
-                    @if (forecast.IsCanceled==false&&serviceProvider.PinCode==forecast.Pincode&&forecast.IsAccepted==false)
+                    @if (forecast.IsCanceled==false&&serviceProvider.PinCode==forecast.Pincode&&forecast.IsAccepted==false&&forecast.IsDeleated==false)
                     {
                         <td>@forecast.Problem</td>
                         @if (@forecast.Description?.Length > 4)
@@ -53,7 +53,7 @@ else
                         <td>@forecast.CreateDate</td>
                         <td>@forecast.CreateDate</td>
                         <td>  <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success" @onclick="x=>AcceptReques(forecast)">Accept</MudButton>
-                        <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Error">Reject</MudButton></td>
+                 @*        <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Error">Reject</MudButton>*@</td> 
                     }
 
                 </tr>
@@ -88,6 +88,7 @@ else
         _urc.Problem = requestClass.Problem;
         _urc.Description= requestClass.Description;
         _urc.Pincode = requestClass.Pincode;
+        _urc.IsDeleated = requestClass.IsDeleated;
         _urc.IsAccepted = true;
         var request = await Http.PostAsJsonAsync("api/Request/UpdateRequest", _urc);
 
@@ -109,10 +110,16 @@ else
         cac.AuditDate = DateTime.Now;
         var response = await Http.PostAsJsonAsync("api/Chat/CreateChatAudit", cac);
         //create
-        NavigationManager.NavigateTo("/chatwindow");
+        Snackbar.Add("Request Accepted");
+        //pass user and shop id
+
+
+        NavigationManager.NavigateTo("/shopacceptdashboard");
         //1}we use an external api
         //1}we use an own api
     }
+
+
 
     
 }

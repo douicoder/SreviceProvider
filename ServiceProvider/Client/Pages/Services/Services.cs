@@ -7,6 +7,11 @@ namespace ServiceProvider.Client.Pages.Services
         {
             await js.InvokeVoidAsync("alert", $"Description: {description}");
         }
+
+        public static async Task ShowMsg(IJSRuntime js, string? description)
+        {
+            await js.InvokeVoidAsync("alert", $"{description}");
+        }
     }
 
 }

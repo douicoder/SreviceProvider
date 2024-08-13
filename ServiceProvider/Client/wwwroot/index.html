@@ -12,7 +12,15 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <script type="text/javascript">
+        function setLocalStorageItem(key, value) {
+            localStorage.setItem(key, value);
+        }
 
+        function getLocalStorageItem(key) {
+            return localStorage.getItem(key);
+        }
+    </script>
 </head>
 
 <body>

@@ -1,0 +1,74 @@
+﻿@page "/chatwindow"
+@using MudBlazor
+@inject NavigationManager Navigation
+@* @inject ChatPropClass prop *@
+@using MudBlazor
+@using ServiceProvider.Client.Pages.Shop
+@using ServiceProvider.Client.Pages.User.Request
+@using ServiceProvider.Shared.Chats
+@inject NavigationManager Navigation
+
+@code {
+    Guid? ChatAuditID = null;
+    UserModel? publicuserModel = new UserModel();
+    List<ChatHistoryClass>? chatHistoryClasslist = new List<ChatHistoryClass>();
+    ChatPropClass prop = new ChatPropClass();
+    public class LocalChatPropClass
+    {
+    
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
+        // await _localstorage.SetItemAsync("currentchat", ChatPropClass);
+
+       // await MyServices.ShowMsg(js, $"shopid-: {prop.shopidtenp}, userid -:{ShopAccepted_DashBoard.useridtemp},username- {ShopAccepted_DashBoard.username},shopname- {ShopAccepted_DashBoard.shopname}");
+        // _chathistory = await Http.GetFromJsonAsync<List<ChatHistoryAuditDetailsClassResponse>>($"api/Chat/ShowChat?ShopID={}&UserID={}");
+        prop = await _localstorage.GetItemAsync<ChatPropClass>("chatHistoryCust");
+        await MyServices.ShowMsg(js, $"chatUserId:    " + prop.UserID);
+        ChatAuditID = await Http.GetFromJsonAsync<Guid>($"api/Chat/GetAuditID?UserID={prop.UserID}&ShopID={prop.ShopID}");
+        chatHistoryClasslist = await Http.GetFromJsonAsync<List<ChatHistoryClass>>($"api/Chat/ShowChatHistory?AuditID={ChatAuditID}");
+    }
+
+    ChatHistoryClass chatHistoryClass = new ChatHistoryClass();
+    string message;
+    private async void SendMessage(string msg)
+    {
+       
+        chatHistoryClass.ChatHistoryID = Guid.NewGuid();
+        chatHistoryClass.AuditID = ChatAuditID;
+        chatHistoryClass.Messege = msg;
+        chatHistoryClass.ShopName = prop.ShopName;
+        chatHistoryClass.UserName = prop.UserName;
+        //change it accordingly later...
+        chatHistoryClass.MessegeFrom = prop.MessageFrom;
+        chatHistoryClass.ChatHistoryDate = DateTime.Now;
+
+        var response = await Http.PostAsJsonAsync("api/Chat/PostNewChat", chatHistoryClass);
+        if (response.IsSuccessStatusCode)
+        {
+            Snackbar.Add("Chat Sended!!");
+
+        }
+
+    }
+}
+
+<MudContainer>
+    <MudPaper Class="pa-4" Outlined="true">
+        <MudText Typo="Typo.h5">Chat Interface</MudText>
+        <MudDivider Class="my-2" />
+        <MudList>
+            @foreach (var msg in chatHistoryClasslist)
+            {
+                <MudListItem>
+                    <MudText>@msg.MessegeFrom : @msg.Messege</MudText>
+                </MudListItem>
+            }
+        </MudList>
+        <MudTextField @bind-Value="message" Placeholder="Type a message..." Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Send" OnAdornmentClick="()=>SendMessage(message)" />
+
+    </MudPaper>
+</MudContainer>
+

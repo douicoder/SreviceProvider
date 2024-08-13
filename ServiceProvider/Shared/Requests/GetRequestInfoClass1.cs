@@ -43,6 +43,6 @@ namespace ServiceProvider.Shared.Requests
         public string? RequestStatus { get; set; }//15
 
         public Guid? AcceptedByID { get; set; }//16
-
+        public bool? IsDeleated { get; set; }
     }
 }

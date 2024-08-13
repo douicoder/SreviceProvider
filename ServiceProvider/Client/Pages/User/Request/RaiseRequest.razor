@@ -60,6 +60,7 @@
             request.CancelResonDate = null;
             request.IsAccepted = false;
             request.Pincode = pincode;
+            request.IsDeleated = false;
 
             var response = await Http.PostAsJsonAsync("api/Request/PostRequest", request);
             if (response.IsSuccessStatusCode)

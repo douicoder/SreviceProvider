@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Tls;
 using ServiceProvider.Server.Modules.Interface;
 using ServiceProvider.Shared.Requests;
 using ServiceProvider.Shared.User;
@@ -82,9 +83,25 @@ namespace ServiceProvider.Server.Modules.Manager
 
         public bool UpdateRequest(RequestClass requestclass)
         {
-            _database.RequestsDB.Update(requestclass);
-            _database.SaveChanges();
-            return true;
+            try
+            {
+                var record=_database.RequestsDB.Where(x => x.RequestID==requestclass.RequestID).FirstOrDefault();
+                if(record != null) 
+                {
+
+                    record.IsAccepted = requestclass.IsAccepted;
+                    record.IsDeleated = requestclass.IsDeleated;
+
+
+                }
+                _database.SaveChanges();
+                return true;
+            }
+            catch(Exception ex) 
+            {
+                throw ex;
+                return false;
+            }
         }
     }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ServiceProvider.Shared.User
 {
@@ -19,7 +20,7 @@ namespace ServiceProvider.Shared.User
 
         public string PinCode{ get; set; }
 
-        
+
 
 
 

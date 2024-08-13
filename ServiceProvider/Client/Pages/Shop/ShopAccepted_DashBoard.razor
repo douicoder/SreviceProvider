@@ -1,5 +1,6 @@
 ﻿@page "/shopacceptdashboard"
-
+@inject ChatPropClass prop
+@using ServiceProvider.Client.Pages.User.Request
 @using ServiceProvider.Shared
 @using ServiceProvider.Shared.Chats
 @inject HttpClient Http
@@ -52,7 +53,7 @@ else
                         <td>@forecast.CreateDate</td>
                         <td>@forecast.UserName</td>
                         <td>
-                            <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success" >chat</MudButton>
+                            <MudButton Class="btnresize" Variant="Variant.Filled" Color="Color.Success"@onclick="()=>Onchatclick(forecast)" >chat</MudButton>
 
                         </td>
                     }
@@ -72,9 +73,28 @@ else
     {
         publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
         serviceProvider = await Http.GetFromJsonAsync<ServiceProviderProfile>("api/ServiceProviderDetails/GetServiceProviderProfile?userId=" + publicuserModel.ID);
-      
+
         requests = await Http.GetFromJsonAsync<List<GetRequestInfoModel>>("api/Request/GetRequestInfo?AcceptedByGuid="+serviceProvider.ServiceproviderProfileID);
 
     }
+    async void Onchatclick(GetRequestInfoModel _obj)
+    {
+        ChatPropClass prop1 = new ChatPropClass();       
 
+        prop1.ShopID = _obj.AcceptedByID;
+        prop1.UserID = _obj.UserID;
+        prop1.UserName = _obj.UserName;
+        prop1.ShopName = _obj.ShopName;
+        prop1.MessageFrom = _obj.ShopName;
+        
+        await _localstorage.SetItemAsync("chatHistoryCust", prop1);
+       // await _localstorage.SetItemAsync("ChatProp", UserRequestDashBoard._cp);
+        // js.InvokeVoidAsync("setLocalStorageItem", "ShopID", _obj.AcceptedByID);
+        // js.InvokeVoidAsync("setLocalStorageItem", "UserID", _obj.UserID);
+        // js.InvokeVoidAsync("setLocalStorageItem", "UserName", _obj.UserName);
+        // js.InvokeVoidAsync("setLocalStorageItem", "ShopName", _obj.ShopName);
+        // js.InvokeVoidAsync("setLocalStorageItem", "MessageFrom", _obj.ShopName);
+
+        NavigationManager.NavigateTo("/chatwindow");
+    }
 }

@@ -73,6 +73,7 @@ public class DatabaseContext : DbContext
             r.Property(e => e.IsCanceledBy).HasColumnName("IsCanceledBy");
             r.Property(e => e.IsAccepted).HasColumnName("IsAccepted");
             r.Property(e => e.IsCanceledByID).HasColumnName("IsCanceledByID");
+            r.Property(e => e.IsDeleated).HasColumnName("IsDeleated");
             r.Property(e => e.CancelReason).HasColumnName("CancelReason").HasMaxLength(100);
             r.Property(e => e.CancelResonDate).HasColumnName("CancelResonDate");
         });

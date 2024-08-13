@@ -54,12 +54,45 @@ namespace ServiceProvider.Server.Modules.Manager
             _database.SaveChanges();
             return true;
         }
-
+        public bool NewMegssage(ChatHistoryClass chatHistoryAuditDetails)
+        {
+            try
+            {
+                _database.ChatHistoryDB.Add(chatHistoryAuditDetails);
+                _database.SaveChanges();
+                return true;
+            }
+            catch(Exception ex) 
+            {
+                return false;
+            }
+        }
         public bool CreateNewChatAudit(ChatAuditClass chatAuditClass)
         {
+            var ischatAuditexict = _database.ChatAuditDB.Any(x =>x.ShopID== chatAuditClass.ShopID&& x.UserID== chatAuditClass.UserID);
+            if (ischatAuditexict)
+            {
+                return false;
+            }
+
             _database.ChatAuditDB.Add(chatAuditClass);
             _database.SaveChanges();
             return true;
+        }
+
+        public Guid GetAuditID(Guid userid, Guid shopid)
+        {
+            ChatAuditClass? _chatAuditDB = new ChatAuditClass();
+            _chatAuditDB = _database.ChatAuditDB.Where(x => x.UserID== userid&&x.ShopID==shopid).FirstOrDefault();
+
+            return _chatAuditDB.AuditID;
+        }
+
+        public List<ChatHistoryClass> GetChatHistory(Guid AuditID)
+        {
+            List<ChatHistoryClass> list=new List<ChatHistoryClass>();
+            list=_database.ChatHistoryDB.Where(x=>x.AuditID==AuditID).OrderBy(x=>x.ChatHistoryDate).ToList();
+            return list;
         }
 
         //method which will create the onlyaudit
