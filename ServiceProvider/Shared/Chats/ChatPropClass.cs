@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,10 +21,15 @@ namespace ServiceProvider.Shared.Chats
         //public static string ?ShopName    { get; set; }
         //public static string? MessageFrom{ get; set; }
 
-        public  Guid? ShopID { get; set; }
+        public Guid? ShopID { get; set; }
         public  Guid? UserID { get; set; }
         public  string? UserName { get; set; }
         public  string? ShopName { get; set; }
         public string? MessageFrom { get; set; }
+
+        public string? UserIDText { get; set; }
+        public string? ShopIDText { get; set; }
+
+        public RSA rsaObj { get; set; }
     }
 }

@@ -6,36 +6,49 @@
 @using ServiceProvider.Client.Pages.Shop
 @using ServiceProvider.Client.Pages.User.Request
 @using ServiceProvider.Shared.Chats
+@using System.Security.Cryptography
+@using System.Threading;
+@using System.Threading.Tasks
 @inject NavigationManager Navigation
 
+
 @code {
+    private Timer? refreshTimer;
+    private CancellationTokenSource? cancellationTokenSource;
     Guid? ChatAuditID = null;
     UserModel? publicuserModel = new UserModel();
     List<ChatHistoryClass>? chatHistoryClasslist = new List<ChatHistoryClass>();
     ChatPropClass prop = new ChatPropClass();
-    public class LocalChatPropClass
-    {
-    
-    }
+
+
+    private string currentTime = "";
 
     protected override async Task OnInitializedAsync()
     {
-        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");
-        // await _localstorage.SetItemAsync("currentchat", ChatPropClass);
 
-       // await MyServices.ShowMsg(js, $"shopid-: {prop.shopidtenp}, userid -:{ShopAccepted_DashBoard.useridtemp},username- {ShopAccepted_DashBoard.username},shopname- {ShopAccepted_DashBoard.shopname}");
-        // _chathistory = await Http.GetFromJsonAsync<List<ChatHistoryAuditDetailsClassResponse>>($"api/Chat/ShowChat?ShopID={}&UserID={}");
+        publicuserModel = await _localstorage.GetItemAsync<UserModel>("currentuser");     
         prop = await _localstorage.GetItemAsync<ChatPropClass>("chatHistoryCust");
-        await MyServices.ShowMsg(js, $"chatUserId:    " + prop.UserID);
-        ChatAuditID = await Http.GetFromJsonAsync<Guid>($"api/Chat/GetAuditID?UserID={prop.UserID}&ShopID={prop.ShopID}");
+
+        ChatAuditID = await Http.GetFromJsonAsync<Guid>($"api/Chat/GetAuditID?UserID={prop.UserID}&ShopID= {prop.ShopID}");
+        refreshTimer = new Timer( async _=> await loadChat(), null, 0,2000);
+    }
+
+    private async Task loadChat()
+    {
         chatHistoryClasslist = await Http.GetFromJsonAsync<List<ChatHistoryClass>>($"api/Chat/ShowChatHistory?AuditID={ChatAuditID}");
+       await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        refreshTimer?.Dispose();
     }
 
     ChatHistoryClass chatHistoryClass = new ChatHistoryClass();
     string message;
     private async void SendMessage(string msg)
     {
-       
+
         chatHistoryClass.ChatHistoryID = Guid.NewGuid();
         chatHistoryClass.AuditID = ChatAuditID;
         chatHistoryClass.Messege = msg;
@@ -49,10 +62,12 @@
         if (response.IsSuccessStatusCode)
         {
             Snackbar.Add("Chat Sended!!");
+        //    NavigationManager.NavigateTo("/chatwindow",true);
 
         }
 
     }
+
 }
 
 <MudContainer>
@@ -71,4 +86,3 @@
 
     </MudPaper>
 </MudContainer>
-

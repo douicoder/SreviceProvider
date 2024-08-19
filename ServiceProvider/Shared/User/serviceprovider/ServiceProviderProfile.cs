@@ -21,8 +21,5 @@ namespace ServiceProvider.Shared.User
         public string PinCode{ get; set; }
 
 
-
-
-
     }
 }

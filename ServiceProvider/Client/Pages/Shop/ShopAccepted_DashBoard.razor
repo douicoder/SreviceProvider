@@ -3,6 +3,7 @@
 @using ServiceProvider.Client.Pages.User.Request
 @using ServiceProvider.Shared
 @using ServiceProvider.Shared.Chats
+@using System.Security.Cryptography
 @inject HttpClient Http
 
 <PageTitle>Shop Accept Request DashBoards</PageTitle>
@@ -80,15 +81,19 @@ else
     async void Onchatclick(GetRequestInfoModel _obj)
     {
         ChatPropClass prop1 = new ChatPropClass();       
+        
+       
 
-        prop1.ShopID = _obj.AcceptedByID;
+        prop1.ShopID =  _obj.AcceptedByID;
+       // prop1.ShopIDText = EncryptAndDecrypt.Encrypt(_obj.AcceptedByID.ToString(), publicKey);
+        //prop1.UserIDText = EncryptAndDecrypt.Encrypt(_obj.UserID.ToString(), publicKey);
         prop1.UserID = _obj.UserID;
         prop1.UserName = _obj.UserName;
         prop1.ShopName = _obj.ShopName;
         prop1.MessageFrom = _obj.ShopName;
-        
+       // prop1.rsaObj = rsa;
         await _localstorage.SetItemAsync("chatHistoryCust", prop1);
-       // await _localstorage.SetItemAsync("ChatProp", UserRequestDashBoard._cp);
+        // await _localstorage.SetItemAsync("ChatProp", UserRequestDashBoard._cp);
         // js.InvokeVoidAsync("setLocalStorageItem", "ShopID", _obj.AcceptedByID);
         // js.InvokeVoidAsync("setLocalStorageItem", "UserID", _obj.UserID);
         // js.InvokeVoidAsync("setLocalStorageItem", "UserName", _obj.UserName);
@@ -96,5 +101,10 @@ else
         // js.InvokeVoidAsync("setLocalStorageItem", "MessageFrom", _obj.ShopName);
 
         NavigationManager.NavigateTo("/chatwindow");
+    }
+
+    private string Decrypt(string id)
+    {
+        return "";
     }
 }
